@@ -1,30 +1,61 @@
 # HiRou-Arduino
-<br/>
 
-### 📆 프로젝트 기간
+## 🚀 프로젝트 소개
+HiRou-Arduino는 '물좀마셔줘' 스마트 기기의 핵심 하드웨어 제어를 담당하는 부분입니다. 물 섭취량을 정확하게 측정하고, 모바일 애플리케이션과 Bluetooth Low Energy (BLE) 통신을 통해 데이터를 주고받으며, LED로 기기 상태를 시각적으로 피드백합니다. 이 코드는 물리적 센서 데이터와 사용자 경험을 모바일 앱으로 연결하는 다리 역할을 합니다.
 
-- CAPSTONE DESIGN : 2024.03.01 ~ 2024.06.14
-- James Dyson Award : ~ 2024.07.17
+## 💡 주요 기능
 
-<br/>
+*   **BLE 통신 및 연동**:
+    *   '하이루'라는 이름으로 BLE 기기 광고 및 연결 대기
+    *   모바일 앱(중앙 장치)으로부터 특정 명령 수신 및 처리
+    *   측정된 물의 무게 데이터를 앱으로 전송
+*   **무게 측정**:
+    *   HX711 로드셀 모듈을 이용한 물의 무게 측정 및 실시간 모니터링
+    *   앱의 명령(A)에 따른 로드셀 영점(tare) 조절
+*   **시각적 피드백**:
+    *   Adafruit NeoPixel RGB LED 스트립을 통해 기기 상태 및 명령 처리 결과 시각화
+    *   (예: 연결 대기-노란색, 연결됨-초록색/파란색, 영점 조절-핑크색, 목표 달성-초록색 등)
 
-### 😎 Members
+## 🛠️ 하드웨어 구성
 
-<table>
-   <tr>
-    <td align="center"><b><a href="https://github.com/thanx-To-Dev-Minsoo">김민수</a></b></td>
-    <td align="center"><b><a href="https://github.com/Chan0322">이동찬</a></b></td>
-    <td align="center"><b><a href="https://github.com/Ekdzhd1">강성현</a></b></td>
-    <td align="center"><b><a href="https://github.com/papjukuk">박준혁</a></b></td>
-<td align="center"><b><a href="https://github.com/8haneol8">이한얼</a></b></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Leader</b></td>
-    <td align="center"><b>H/W</b></td>
-    <td align="center"><b>H/W</b></td>
-    <td align="center"><b>S/W</b></td>
-    <td align="center"><b>S/W</b></td>
-  </tr>
-</table>
+*   **아두이노 보드**: Arduino Nano 33 BLE (또는 BLE 통신을 지원하는 호환 아두이노 보드)
+*   **무게 센서**: HX711 로드셀 앰프 모듈 및 로드셀 센서 (저울 센서)
+*   **RGB LED**: Adafruit NeoPixel (WS2812B 호환) 스트립
 
-<br/>
+## 🔌 핀 연결
+
+*   **NeoPixel LED 스트립**: 핀 4
+*   **HX711 로드셀 모듈**:
+    *   DOUT 핀: 아두이노 핀 3
+    *   SCK 핀: 아두이노 핀 2
+
+## 📦 소프트웨어 및 라이브러리
+
+*   **개발 환경**: Arduino IDE
+*   **사용 라이브러리**:
+    *   `ArduinoBLE`: BLE 통신을 위한 라이브러리
+    *   `Adafruit_NeoPixel`: NeoPixel LED 제어를 위한 라이브러리
+    *   `HX711`: 로드셀 모듈 제어를 위한 라이브러리
+
+## 📡 BLE 서비스 및 특성 (UUID)
+
+*   **서비스 UUID**: `12345678-1234-5678-1234-567812345678`
+*   **특성 UUID**: `87654321-8765-4321-8765-432187654321` (읽기 및 쓰기 가능, 최대 20바이트 문자열)
+
+## ⚙️ 설정 및 사용법
+
+1.  **개발 환경 설정**:
+    *   Arduino IDE를 설치하고, 사용하는 아두이노 보드(예: Arduino Nano 33 BLE)에 맞는 보드 패키지를 설치합니다.
+    *   위의 '사용 라이브러리'에 명시된 3가지 라이브러리를 Arduino IDE 라이브러리 관리자를 통해 설치합니다.
+2.  **하드웨어 연결**:
+    *   '핀 연결' 섹션을 참고하여 NeoPixel LED, HX711 모듈, 로드셀 센서를 아두이노 보드에 올바르게 연결합니다.
+3.  **코드 업로드**:
+    *   제공된 Arduino 스케치(`[스케치 파일명].ino`)를 Arduino IDE에서 열고, 사용하는 아두이노 보드를 선택한 후 업로드합니다.
+4.  **로드셀 보정**:
+    *   `setup()` 함수에 `scale.tare()`를 통해 시작 시 로드셀의 영점을 자동으로 조절합니다.
+    *   코드 내 `scale.set_scale(400100.00)` 값은 특정 로드셀에 맞게 설정된 값이며, 정확한 측정을 위해서는 사용 로드셀에 맞춰 재보정이 필요할 수 있습니다.
+5.  **모바일 앱 연동**:
+    *   아두이노 코드가 실행되면, '하이루'라는 이름으로 BLE 광고가 시작됩니다.
+    *   호환되는 모바일 애플리케이션(예: HiRou-Android 앱)을 통해 이 BLE 기기에 연결하여 데이터를 주고받고 명령을 제어할 수 있습니다.
+
+---
